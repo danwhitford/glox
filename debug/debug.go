@@ -1,6 +1,8 @@
 package debug
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 	"strings"
 
@@ -14,6 +16,7 @@ func DissassembleChunk(ch chunk.Chunk, name string) string {
 	sb.WriteString(" ==\n")
 
 	for offset := 0; offset < ch.Len(); {
+
 		sb.WriteString(fmt.Sprintf("%04d ", offset))
 
 		if offset > 0 && ch.LineAt(offset) == ch.LineAt(offset-1) {
@@ -39,18 +42,36 @@ func dissassembleInstruction(ch chunk.Chunk, offset int) (string, int) {
 		return simpleInstruction("OP_RETURN", offset)
 	case chunk.OP_CONSTANT:
 		return constantInstruction("OP_CONSTANT", ch, offset)
+	case chunk.OP_CONSTANT_LONG:
+		return longConstantInstruction("OP_CONSTANT_LONG", ch, offset)
 	default:
 		return fmt.Sprintf("Unknown OP_CODE %x", instruction), offset + 1
 	}
 }
 
+func longConstantInstruction(name string, ch chunk.Chunk, offset int) (string, int) {
+	// constantIdx := ch.At(offset + 1)
+	var constantIdxBytes []byte
+	for i := 0; i < 4; i++ {
+		constantIdxBytes = append(constantIdxBytes, ch.At(offset + 1 + i))
+	}
+
+	var constantIdx int32
+	buf := bytes.NewReader(constantIdxBytes)
+	binary.Read(buf, binary.LittleEndian, &constantIdx)
+
+	constantVal := ch.ConstantAt(int(constantIdx))
+	str := fmt.Sprintf("%-16s '%g'", name, constantVal)
+	return str, 5
+}
+
 func constantInstruction(name string, ch chunk.Chunk, offset int) (string, int) {
 	constantIdx := ch.At(offset + 1)
-	constantVal := ch.ConstantAt(constantIdx)
+	constantVal := ch.ConstantAt(int(constantIdx))
 	str := fmt.Sprintf("%-16s '%g'", name, constantVal)
-	return str, offset + 2
+	return str, 2
 }
 
 func simpleInstruction(name string, offset int) (string, int) {
-	return name, offset + 1
+	return name, 1
 }

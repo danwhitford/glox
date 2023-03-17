@@ -40,6 +40,33 @@ func TestDissasembleChunks(t *testing.T) {
 		want,
 	})
 
+	chunks = chunk.InitChunk()
+	chunks.WriteConstant(1.2, 123)
+	chunks.WriteChunk(chunk.OP_RETURN, 123)
+	want = "== test chunk ==\n0000  123 OP_CONSTANT_LONG '1.2'\n0005    | OP_RETURN\n"
+
+	table = append(table, struct {
+		input chunk.Chunk
+		want  string
+	}{
+		chunks,
+		want,
+	})
+
+	chunks = chunk.InitChunk()
+	chunks.WriteConstant(1.2, 123)
+	chunks.WriteConstant(3.4, 123)
+	chunks.WriteChunk(chunk.OP_RETURN, 123)
+	want = "== test chunk ==\n0000  123 OP_CONSTANT_LONG '1.2'\n0005    | OP_CONSTANT_LONG '3.4'\n0010    | OP_RETURN\n"
+
+	table = append(table, struct {
+		input chunk.Chunk
+		want  string
+	}{
+		chunks,
+		want,
+	})
+
 	for _, tst := range table {
 		got := DissassembleChunk(tst.input, "test chunk")
 		if diff := cmp.Diff(tst.want, got); diff != "" {
