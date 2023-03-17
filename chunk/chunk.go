@@ -75,3 +75,7 @@ func (c *Chunk) WriteConstant(constant value.Value, line int) {
 	binary.Write(buf, binary.LittleEndian, top)
 	c.code = append(c.code, buf.Bytes()...)
 }
+
+func (c* Chunk) SubChunk(from, n int) []byte {
+	return c.code[from:from+n]
+}

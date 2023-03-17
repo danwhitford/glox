@@ -50,11 +50,7 @@ func dissassembleInstruction(ch chunk.Chunk, offset int) (string, int) {
 }
 
 func longConstantInstruction(name string, ch chunk.Chunk, offset int) (string, int) {
-	// constantIdx := ch.At(offset + 1)
-	var constantIdxBytes []byte
-	for i := 0; i < 4; i++ {
-		constantIdxBytes = append(constantIdxBytes, ch.At(offset + 1 + i))
-	}
+	constantIdxBytes := ch.SubChunk(offset + 1, 4)
 
 	var constantIdx int32
 	buf := bytes.NewReader(constantIdxBytes)
