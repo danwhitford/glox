@@ -12,10 +12,17 @@ func DissassembleChunk(ch chunk.Chunk, name string) string {
 	sb.WriteString("== ")
 	sb.WriteString(name)
 	sb.WriteString(" ==\n")
-	
+
 	for offset := 0; offset < ch.Len(); {
-		instruction, nudge := dissassembleInstruction(ch, offset)
 		sb.WriteString(fmt.Sprintf("%04d ", offset))
+
+		if offset > 0 && ch.LineAt(offset) == ch.LineAt(offset-1) {
+			sb.WriteString("   | ")
+		} else {
+			sb.WriteString(fmt.Sprintf("%4d ", ch.LineAt(offset)))
+		}
+
+		instruction, nudge := dissassembleInstruction(ch, offset)
 		sb.WriteString(instruction)
 		sb.WriteString("\n")
 		offset += nudge
@@ -47,4 +54,3 @@ func constantInstruction(name string, ch chunk.Chunk, offset int) (string, int) 
 func simpleInstruction(name string, offset int) (string, int) {
 	return name, offset + 1
 }
-

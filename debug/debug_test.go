@@ -14,8 +14,8 @@ func TestDissasembleChunks(t *testing.T) {
 	}
 
 	chunks := chunk.InitChunk()
-	chunks.WriteChunk(chunk.OP_RETURN)
-	want := "== test chunk ==\n0000 OP_RETURN\n"
+	chunks.WriteChunk(chunk.OP_RETURN, 123)
+	want := "== test chunk ==\n0000  123 OP_RETURN\n"
 
 	table = append(table, struct {
 		input chunk.Chunk
@@ -27,10 +27,10 @@ func TestDissasembleChunks(t *testing.T) {
 
 	chunks = chunk.InitChunk()
 	constant := chunks.AddConstant(1.2)
-	chunks.WriteChunk(chunk.OP_CONSTANT)
-	chunks.WriteChunk(constant)
-	chunks.WriteChunk(chunk.OP_RETURN)
-	want = "== test chunk ==\n0000 OP_CONSTANT      '1.2'\n0002 OP_RETURN\n"
+	chunks.WriteChunk(chunk.OP_CONSTANT, 123)
+	chunks.WriteChunk(constant, 123)
+	chunks.WriteChunk(chunk.OP_RETURN, 123)
+	want = "== test chunk ==\n0000  123 OP_CONSTANT      '1.2'\n0002    | OP_RETURN\n"
 
 	table = append(table, struct {
 		input chunk.Chunk

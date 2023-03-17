@@ -10,9 +10,9 @@ import (
 func main() {
 	chunks := chunk.InitChunk()
 	constant := chunks.AddConstant(1.2)
-	chunks.WriteChunk(chunk.OP_CONSTANT)
-	chunks.WriteChunk(constant)
-	chunks.WriteChunk(chunk.OP_RETURN)
-	
+	chunks.WriteChunk(chunk.OP_CONSTANT, 123)
+	chunks.WriteChunk(constant, 123)
+	chunks.WriteChunk(chunk.OP_RETURN, 123)
+
 	fmt.Println(debug.DissassembleChunk(chunks, "test chunk"))
 }
