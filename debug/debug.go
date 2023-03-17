@@ -46,7 +46,7 @@ func dissassembleInstruction(ch chunk.Chunk, offset int) (string, int) {
 
 func constantInstruction(name string, ch chunk.Chunk, offset int) (string, int) {
 	constantIdx := ch.At(offset + 1)
-	constantVal := ch.ConstantAt(int(constantIdx))
+	constantVal := ch.ConstantAt(constantIdx)
 	str := fmt.Sprintf("%-16s '%g'", name, constantVal)
 	return str, offset + 2
 }

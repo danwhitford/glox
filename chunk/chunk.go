@@ -1,11 +1,14 @@
 package chunk
 
-import "github.com/danwhitford/glox/value"
+import (
+	"github.com/danwhitford/glox/rle"
+	"github.com/danwhitford/glox/value"
+)
 
 type Chunk struct {
 	code      []byte
 	constants value.ValueArray
-	lines     []int
+	lines     rle.RunLengthEncodedArray
 }
 
 const (
@@ -23,7 +26,7 @@ func InitChunk() Chunk {
 
 func (c *Chunk) WriteChunk(cc byte, line int) {
 	c.code = append(c.code, cc)
-	c.lines = append(c.lines, line)
+	c.lines.Append(line)
 }
 
 func (c *Chunk) At(i int) byte {
@@ -39,10 +42,10 @@ func (c *Chunk) AddConstant(constant value.Value) byte {
 	return byte(len(c.constants) - 1)
 }
 
-func (c *Chunk) ConstantAt(i int) value.Value {
+func (c *Chunk) ConstantAt(i byte) value.Value {
 	return c.constants[i]
 }
 
 func (c *Chunk) LineAt(i int) int {
-	return c.lines[i]
+	return c.lines.Get(i)
 }
