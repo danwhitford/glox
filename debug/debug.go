@@ -25,7 +25,7 @@ func DissassembleChunk(ch chunk.Chunk, name string) string {
 			sb.WriteString(fmt.Sprintf("%4d ", ch.LineAt(offset)))
 		}
 
-		instruction, nudge := dissassembleInstruction(ch, offset)
+		instruction, nudge := DissassembleInstruction(ch, offset)
 		sb.WriteString(instruction)
 		sb.WriteString("\n")
 		offset += nudge
@@ -34,7 +34,7 @@ func DissassembleChunk(ch chunk.Chunk, name string) string {
 	return sb.String()
 }
 
-func dissassembleInstruction(ch chunk.Chunk, offset int) (string, int) {
+func DissassembleInstruction(ch chunk.Chunk, offset int) (string, int) {
 
 	instruction := ch.At(offset)
 	switch instruction {
@@ -50,7 +50,7 @@ func dissassembleInstruction(ch chunk.Chunk, offset int) (string, int) {
 }
 
 func longConstantInstruction(name string, ch chunk.Chunk, offset int) (string, int) {
-	constantIdxBytes := ch.SubChunk(offset + 1, 4)
+	constantIdxBytes := ch.SubChunk(offset+1, 4)
 
 	var constantIdx int32
 	buf := bytes.NewReader(constantIdxBytes)
