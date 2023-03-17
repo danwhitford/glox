@@ -5,6 +5,7 @@ import (
 
 	"github.com/danwhitford/glox/chunk"
 	"github.com/danwhitford/glox/debug"
+	"github.com/danwhitford/glox/vm"
 )
 
 func main() {
@@ -14,4 +15,7 @@ func main() {
 	chunks.WriteChunk(chunk.OP_RETURN, 123)
 
 	fmt.Println(debug.DissassembleChunk(chunks, "test chunk"))
+
+	vm1 := vm.InitVm()
+	vm1.Interpret(chunks);
 }
