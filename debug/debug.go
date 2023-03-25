@@ -44,6 +44,16 @@ func DissassembleInstruction(ch chunk.Chunk, offset int) (string, int) {
 		return constantInstruction("OP_CONSTANT", ch, offset)
 	case chunk.OP_CONSTANT_LONG:
 		return longConstantInstruction("OP_CONSTANT_LONG", ch, offset)
+	case chunk.OP_NEGATE:
+		return simpleInstruction("OP_NEGATE", offset)
+	case chunk.OP_ADD:
+		return simpleInstruction("OP_ADD", offset)
+	case chunk.OP_DIVIDE:
+		return simpleInstruction("OP_DIVIDE", offset)
+	case chunk.OP_SUBTRACT:
+		return simpleInstruction("OP_SUBTRACT", offset)
+	case chunk.OP_MULITPLY:
+		return simpleInstruction("OP_MULITPLY", offset)
 	default:
 		return fmt.Sprintf("Unknown OP_CODE %x", instruction), offset + 1
 	}

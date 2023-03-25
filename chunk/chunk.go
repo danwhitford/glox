@@ -18,6 +18,11 @@ const (
 	OP_RETURN byte = iota
 	OP_CONSTANT
 	OP_CONSTANT_LONG
+	OP_NEGATE
+	OP_ADD
+	OP_DIVIDE
+	OP_MULITPLY
+	OP_SUBTRACT
 )
 
 func InitChunk() Chunk {

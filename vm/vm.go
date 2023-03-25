@@ -54,12 +54,26 @@ func (vm *VM) run() InterpretResult {
 		instruction := vm.readByte()
 		switch instruction {
 		case chunk.OP_RETURN:
-			fmt.Println("> ", vm.Pop())
+			fmt.Fprintln(vm.outf, ">", vm.Pop())
 			return INTERPRET_OK
 		case chunk.OP_CONSTANT:
 			constant := vm.readConstant()
 			vm.Push(constant)
-		}
+		case chunk.OP_NEGATE:
+			vm.stack[vm.stackTop] = -vm.stack[vm.stackTop]
+		case chunk.OP_ADD:
+			b := vm.Pop()
+			vm.stack[vm.stackTop] += b
+		case chunk.OP_DIVIDE:
+			b := vm.Pop()
+			vm.stack[vm.stackTop] /= b
+		case chunk.OP_MULITPLY:
+			b := vm.Pop()
+			vm.stack[vm.stackTop] *= b
+		case chunk.OP_SUBTRACT:
+			b := vm.Pop()
+			vm.stack[vm.stackTop] -= b			
+		}		
 	}
 }
 
