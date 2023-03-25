@@ -17,22 +17,13 @@ func TestInterpret(t *testing.T) {
 		{
 			func() chunk.Chunk {
 				ch := chunk.InitChunk()
-				ch.WriteChunk(chunk.OP_RETURN, 1)
-				return ch
-			},
-			"OP_RETURN\n",
-			INTERPRET_OK,
-		},
-		{
-			func() chunk.Chunk {
-				ch := chunk.InitChunk()
 				constant := ch.AddConstant(1.2)
 				ch.WriteChunk(chunk.OP_CONSTANT, 123)
 				ch.WriteChunk(constant, 123)
 				ch.WriteChunk(chunk.OP_RETURN, 123)
 				return ch
 			},
-			"OP_CONSTANT      '1.2'\nOP_RETURN\n",
+			"OP_CONSTANT      '1.2'\n---\n[ 1.2 ]\nOP_RETURN\n---\n",
 			INTERPRET_OK,
 		},
 	}

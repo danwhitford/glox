@@ -10,10 +10,12 @@ import (
 )
 
 type VM struct {
-	ch    chunk.Chunk
-	ip    int
-	debug bool
-	outf io.Writer
+	ch       chunk.Chunk
+	ip       int
+	debug    bool
+	outf     io.Writer
+	stack    []value.Value
+	stackTop int
 }
 
 type InterpretResult byte
@@ -26,8 +28,10 @@ const (
 
 func InitVm(debug bool, w io.Writer) VM {
 	return VM{
-		debug: debug,
-		outf: w,
+		stack:    make([]value.Value, 0),
+		stackTop: 0,
+		debug:    debug,
+		outf:     w,
 	}
 }
 
@@ -40,16 +44,21 @@ func (vm *VM) Interpret(ch chunk.Chunk) InterpretResult {
 func (vm *VM) run() InterpretResult {
 	for {
 		if vm.debug {
+			for _, v := range vm.stack {
+				fmt.Fprintf(vm.outf, "[ %v ]\n", v)
+			}
 			s, _ := debug.DissassembleInstruction(vm.ch, vm.ip)
 			fmt.Fprintln(vm.outf, s)
+			fmt.Fprintln(vm.outf, "---")
 		}
 		instruction := vm.readByte()
 		switch instruction {
 		case chunk.OP_RETURN:
+			fmt.Println("> ", vm.Pop())
 			return INTERPRET_OK
 		case chunk.OP_CONSTANT:
 			constant := vm.readConstant()
-			fmt.Println(constant)
+			vm.Push(constant)
 		}
 	}
 }
@@ -62,4 +71,14 @@ func (vm *VM) readByte() byte {
 
 func (vm *VM) readConstant() value.Value {
 	return vm.ch.ConstantAt(int(vm.readByte()))
+}
+
+func (vm *VM) Push(val value.Value) {
+	vm.stack = append(vm.stack, val)	
+}
+
+func (vm *VM) Pop() value.Value {
+	v := vm.stack[len(vm.stack) - 1]
+	vm.stack = vm.stack[:len(vm.stack)-1]
+	return v
 }
